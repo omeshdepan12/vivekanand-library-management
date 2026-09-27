@@ -1,18 +1,19 @@
 {% extends 'base.html' %}
 
-{% block title %}Leave Library{% endblock %}
+{% block title %}Verify OTP | Library{% endblock %}
 
 {% block content %}
-<section class="panel">
-  <h2>Leave Library</h2>
-  <p class="muted">Leaving library will deactivate your account, cancel AutoPay, and release your seat for another student.</p>
+<section class="form-card small-card">
+  <h2>Verify OTP</h2>
+  <p class="demo-otp-box">Demo OTP: <strong>{{ otp_value }}</strong></p>
+  <p class="muted">Target: {{ target }}</p>
 
-  <form method="post" class="form-card small-card" style="max-width: 540px;">
+  <form method="post">
     <div class="field">
-      <label>Reason for leaving</label>
-      <textarea name="reason" rows="4" placeholder="Optional reason"></textarea>
+      <label>Enter OTP</label>
+      <input type="text" name="otp" maxlength="6" required>
     </div>
-    <button class="btn primary full-width" type="submit">Confirm Leave Request</button>
+    <button type="submit" class="btn primary full-width">Verify & Login</button>
   </form>
 </section>
 {% endblock %}

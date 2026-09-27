@@ -22,6 +22,10 @@
       <span>AutoPay</span>
       <strong>{{ auto_pay.status if auto_pay else 'Inactive' }}</strong>
     </div>
+    <div class="stat-box wide">
+      <span>Seat</span>
+      <strong>{{ seat.seat_number if seat else 'Not Assigned' }}</strong>
+    </div>
   </div>
 </section>
 
@@ -36,28 +40,39 @@
 </section>
 
 <section class="panel">
+  <h3>Quick Actions</h3>
+  <div class="cta-row">
+    <a class="btn secondary" href="{{ url_for('main.student_autopay') }}">Manage AutoPay</a>
+    <a class="btn secondary" href="{{ url_for('main.student_leave_library') }}">Leave Library</a>
+    <a class="btn secondary" href="{{ url_for('main.student_fees') }}">View Fees</a>
+  </div>
+</section>
+
+<section class="panel">
   <h3>Payment History</h3>
-  {% if payments %}
-    <table>
-      <thead>
-        <tr>
-          <th>Due Date</th>
-          <th>Amount</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for payment in payments %}
-        <tr>
-          <td>{{ payment.due_date }}</td>
-          <td>₹{{ payment.amount }}</td>
-          <td>{{ payment.status }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p>No payments available yet.</p>
-  {% endif %}
+  <div class="table-wrap">
+    {% if payments %}
+      <table>
+        <thead>
+          <tr>
+            <th>Due Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for payment in payments %}
+          <tr>
+            <td>{{ payment.due_date }}</td>
+            <td>₹{{ payment.amount }}</td>
+            <td>{{ payment.status }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="muted">No payments available yet.</p>
+    {% endif %}
+  </div>
 </section>
 {% endblock %}

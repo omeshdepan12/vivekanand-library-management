@@ -1,61 +1,91 @@
-# Vivekanand Library Management
+{% extends 'base.html' %}
 
-A Flask-based starter project for a library management system with:
-- Home page
-- Student registration
-- Student login with OTP-based verification
-- Admin login and dashboard
-- Student dashboard with fee and payment sections
-- AutoPay management and leave-library workflow
-- Seat protection mechanism with 50 seat allocation
-- Audit log tracking
+{% block title %}Home | Library{% endblock %}
 
-## Features included
-- Role-based access: Student and Admin
-- OTP verification flow for prototype login
-- SQLite database setup with SQLAlchemy
-- Basic dashboard pages
-- Seat allocation and release logic
-- AutoPay consent flow and cancellation
-- Audit log for sensitive actions
-- Security-first layout for future enhancements
+{% block content %}
+<section class="hero">
+  <div class="hero-text">
+    <span class="badge">Digital Library Platform</span>
+    <h1>Smart Learning, Secure Access, Seamless Management.</h1>
+    <p>
+      Vivekanand Library brings together student registration, payment tracking,
+      seat management, AutoPay, and admin oversight in one secure digital system.
+    </p>
+    <div class="cta-row">
+      <a class="btn primary" href="{{ url_for('main.register') }}">Student Registration</a>
+      <a class="btn secondary" href="{{ url_for('main.login') }}">Login</a>
+    </div>
 
-## Tech stack
-- Python 3
-- Flask
-- Flask-SQLAlchemy
-- Bootstrap-inspired CSS
+    <div class="hero-metrics">
+      <div>
+        <strong>50</strong>
+        <span>Seats</span>
+      </div>
+      <div>
+        <strong>24/7</strong>
+        <span>Access</span>
+      </div>
+      <div>
+        <strong>Secure</strong>
+        <span>System</span>
+      </div>
+    </div>
+  </div>
 
-## Run locally
+  <div class="hero-panel">
+    <div class="mini-card">
+      <span class="mini-label">Today</span>
+      <h3>₹24,500</h3>
+      <p>Monthly collection</p>
+    </div>
+    <div class="mini-card soft">
+      <span class="mini-label">Students</span>
+      <h3>148</h3>
+      <p>Active members</p>
+    </div>
+    <div class="mini-card highlight">
+      <span class="mini-label">AutoPay</span>
+      <h3>92%</h3>
+      <p>Activation rate</p>
+    </div>
+  </div>
+</section>
 
-1. Create a virtual environment
-   ```bash
-   python -m venv venv
-   source venv/bin/activate   # On Windows: venv\Scripts\activate
-   ```
+<section class="features-grid">
+  <div class="feature-card">
+    <div class="icon">🎓</div>
+    <h3>Student Portal</h3>
+    <p>Profile, payments, AutoPay, and due date tracking in one dashboard.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">🛡️</div>
+    <h3>Admin Controls</h3>
+    <p>Monitor students, fees, reports, seat bookings, and account status safely.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">💳</div>
+    <h3>Secure Payments</h3>
+    <p>One-step authorization flow with recurring payment safety and clear consent.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">📊</div>
+    <h3>Operational Insights</h3>
+    <p>Collections, pending dues, active/inactive reports, and audit insights.</p>
+  </div>
+</section>
 
-2. Install dependencies
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. Start the app
-   ```bash
-   python run.py
-   ```
-
-4. Open in browser
-   ```text
-   http://127.0.0.1:5000/
-   ```
-
-## Default admin credentials
-```text
-Username: admin
-Password: admin123
-```
-
-## OTP flow for demo
-When you log in, the app validates the username/mobile and password, then generates a demo OTP and asks you to verify it. This is a prototype OTP flow for development and demonstration.
-
-This starter project is designed for continued development of the real library system with payment gateway integration, secure bank authorization, and role-based access.
+<section class="info-strip">
+  <div>
+    <span>Student Registration</span>
+    <strong>Quick digital onboarding</strong>
+  </div>
+  <div>
+    <span>Library Access</span>
+    <strong>Seat-based allocation</strong>
+  </div>
+  <div>
+    <span>Payment & AutoPay</span>
+    <strong>Consent-driven recurring billing</strong>
+  </div>
+</section>
+{% endblock %}

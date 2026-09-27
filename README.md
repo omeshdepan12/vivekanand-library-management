@@ -1,27 +1,20 @@
-{% extends 'base.html' %}
+document.addEventListener('DOMContentLoaded', () => {
+  const forms = document.querySelectorAll('form');
 
-{% block title %}Seat Management{% endblock %}
+  forms.forEach((form) => {
+    form.addEventListener('submit', () => {
+      const submitBtn = form.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.textContent = 'Processing...';
+        submitBtn.disabled = true;
+      }
+    });
+  });
+});
 
-{% block content %}
-<section class="panel">
-  <h2>Seat Management</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Seat</th>
-        <th>Status</th>
-        <th>Student</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for seat in seats %}
-      <tr>
-        <td>{{ seat.seat_number }}</td>
-        <td>{{ seat.status }}</td>
-        <td>{{ seat.student_id if seat.student_id else 'Available' }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</section>
-{% endblock %}
+const links = document.querySelectorAll('nav a');
+links.forEach((link) => {
+  if (link.textContent.trim() === 'Logout') {
+    link.style.opacity = '0.9';
+  }
+});

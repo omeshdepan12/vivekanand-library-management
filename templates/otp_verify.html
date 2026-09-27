@@ -1,28 +1,42 @@
 {% extends 'base.html' %}
 
-{% block title %}Login | Library{% endblock %}
+{% block title %}Register | Library{% endblock %}
 
 {% block content %}
-<section class="form-card small-card">
-  <h2>Login</h2>
-  <p class="muted">OTP-based verification is enabled for prototype use. After valid credentials, a demo OTP is generated.</p>
+<section class="form-card">
+  <h2>Create Your Student Profile</h2>
   <form method="post">
-    <div class="field">
-      <label>Login As</label>
-      <select name="user_type">
-        <option value="student">Student</option>
-        <option value="admin">Admin</option>
-      </select>
+    <div class="form-grid">
+      <div class="field">
+        <label>Name</label>
+        <input type="text" name="name" required>
+      </div>
+      <div class="field">
+        <label>Mobile Number</label>
+        <input type="text" name="mobile" required>
+      </div>
+      <div class="field">
+        <label>Student ID</label>
+        <input type="text" name="student_id" required>
+      </div>
+      <div class="field">
+        <label>Joining Date</label>
+        <input type="date" name="joining_date" required>
+      </div>
+      <div class="field">
+        <label>Batch / Seat</label>
+        <input type="text" name="batch" required>
+      </div>
+      <div class="field">
+        <label>Monthly Fee</label>
+        <input type="number" step="0.01" name="monthly_fee" value="0">
+      </div>
+      <div class="field full-width">
+        <label>Emergency Contact</label>
+        <input type="text" name="emergency_contact" required>
+      </div>
     </div>
-    <div class="field">
-      <label>Mobile Number / Username</label>
-      <input type="text" name="username" required>
-    </div>
-    <div class="field">
-      <label>Password / Student ID</label>
-      <input type="password" name="password" required>
-    </div>
-    <button type="submit" class="btn primary full-width">Send OTP</button>
+    <button type="submit" class="btn primary full-width" style="margin-top: 20px;">Create Account</button>
   </form>
 </section>
 {% endblock %}

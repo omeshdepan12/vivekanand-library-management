@@ -1,85 +1,580 @@
-from datetime import datetime
+:root {
+  --bg: #f4f7fb;
+  --white: #ffffff;
+  --card: #ffffff;
+  --primary: #113d63;
+  --primary-soft: #eaf2ff;
+  --secondary: #0ea5a4;
+  --secondary-soft: #dcfdf7;
+  --text: #1f2937;
+  --muted: #64748b;
+  --border: #e5e7eb;
+  --shadow: 0 18px 40px rgba(17, 61, 99, 0.08);
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --danger: #dc2626;
+  --info: #2563eb;
+}
 
-from flask_sqlalchemy import SQLAlchemy
+* {
+  box-sizing: border-box;
+}
 
-from app import db
+html {
+  scroll-behavior: smooth;
+}
 
+body {
+  margin: 0;
+  font-family: 'Inter', Arial, sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(14, 165, 164, 0.08), transparent 15%),
+    linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+  color: var(--text);
+}
 
-class Admin(db.Model):
-    __tablename__ = "admins"
+img {
+  max-width: 100%;
+  display: block;
+}
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    username = db.Column(db.String(50), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
-    role = db.Column(db.String(20), default="admin")
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
 
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(17, 61, 99, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
 
-class Student(db.Model):
-    __tablename__ = "students"
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 72px;
+  gap: 20px;
+}
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
-    mobile = db.Column(db.String(15), unique=True, nullable=False)
-    student_id = db.Column(db.String(50), unique=True, nullable=False)
-    joining_date = db.Column(db.String(20), nullable=False)
-    batch = db.Column(db.String(50), nullable=False)
-    monthly_fee = db.Column(db.Float, default=0.0)
-    emergency_contact = db.Column(db.String(20), nullable=False)
-    status = db.Column(db.String(20), default="active")
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+.brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "mobile": self.mobile,
-            "student_id": self.student_id,
-            "joining_date": self.joining_date,
-            "batch": self.batch,
-            "monthly_fee": self.monthly_fee,
-            "emergency_contact": self.emergency_contact,
-            "status": self.status,
-        }
+.brand-mark {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #88d5ff, #46b7ae);
+  color: var(--primary);
+  font-weight: 800;
+}
 
+.brand-wrap a {
+  color: var(--white);
+  text-decoration: none;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
 
-class Payment(db.Model):
-    __tablename__ = "payments"
+nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
 
-    id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=False)
-    amount = db.Column(db.Float, nullable=False)
-    due_date = db.Column(db.String(20), nullable=False)
-    paid_date = db.Column(db.String(20), nullable=True)
-    status = db.Column(db.String(20), default="pending")
-    gateway = db.Column(db.String(50), default="secure_gateway")
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+nav a {
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
 
+nav a:hover {
+  color: var(--white);
+}
 
-class AutoPay(db.Model):
-    __tablename__ = "autopays"
+.logout-link {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+}
 
-    id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=False)
-    status = db.Column(db.String(20), default="inactive")
-    monthly_amount = db.Column(db.Float, default=0.0)
-    next_due_date = db.Column(db.String(20), nullable=True)
-    consent_given = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+.main-content {
+  padding-top: 36px;
+  padding-bottom: 48px;
+}
 
+.hero {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 30px;
+  align-items: center;
+  padding: 48px 32px;
+  border-radius: 28px;
+  background: linear-gradient(135deg, var(--primary) 0%, #1b4f8a 100%);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
 
-class AuditLog(db.Model):
-    __tablename__ = "audit_logs"
+.hero-text {
+  position: relative;
+  z-index: 1;
+}
 
-    id = db.Column(db.Integer, primary_key=True)
-    entity = db.Column(db.String(50), nullable=False)
-    action = db.Column(db.String(100), nullable=False)
-    details = db.Column(db.String(255), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+.badge {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.09);
+  border: 1px solid rgba(255,255,255,0.15);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #dfeaff;
+  font-weight: 700;
+}
 
-    @staticmethod
-    def log(entity, action, details):
-        log = AuditLog(entity=entity, action=action, details=details)
-        db.session.add(log)
-        db.session.commit()
+.hero h1 {
+  margin: 20px 0 14px;
+  font-size: clamp(2.2rem, 4vw, 4rem);
+  line-height: 1.08;
+  color: var(--white);
+  letter-spacing: -0.04em;
+}
+
+.hero p {
+  margin: 0;
+  max-width: 620px;
+  color: rgba(255,255,255,0.85);
+  font-size: 1.08rem;
+  line-height: 1.7;
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn.primary {
+  background: linear-gradient(135deg, #4fd1c5, #8ae0d5);
+  color: #08272b;
+  box-shadow: 0 12px 25px rgba(79, 209, 197, 0.3);
+}
+
+.btn.secondary {
+  background: rgba(255,255,255,0.09);
+  color: var(--white);
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+.hero-metrics {
+  display: flex;
+  gap: 20px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+
+.hero-metrics div {
+  min-width: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--white);
+}
+
+.hero-metrics strong {
+  font-size: 1.5rem;
+}
+
+.hero-metrics span {
+  color: rgba(255,255,255,0.75);
+  font-size: 0.8rem;
+}
+
+.hero-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.mini-card {
+  padding: 20px 18px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--white);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.mini-card.soft {
+  background: rgba(255,255,255,0.04);
+}
+
+.mini-card.highlight {
+  background: linear-gradient(135deg, rgba(25, 175, 168, 0.25), rgba(144, 202, 249, 0.22));
+}
+
+.mini-label {
+  display: inline-block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.72);
+}
+
+.mini-card h3 {
+  margin: 14px 0 8px;
+  font-size: 2rem;
+}
+
+.mini-card p {
+  margin: 0;
+  color: rgba(255,255,255,0.8);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 22px;
+  margin-top: 28px;
+}
+
+.feature-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px 22px;
+  box-shadow: var(--shadow);
+}
+
+.icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: var(--primary-soft);
+  font-size: 1.5rem;
+  margin-bottom: 18px;
+}
+
+.feature-card h3 {
+  margin: 0 0 12px;
+  font-size: 1.3rem;
+}
+
+.feature-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.info-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 28px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  padding: 20px 18px;
+}
+
+.info-strip > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 12px;
+}
+
+.info-strip span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.info-strip strong {
+  font-size: 1.05rem;
+}
+
+.form-card,
+.panel {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+.form-card {
+  max-width: 760px;
+  margin: 34px auto;
+  padding: 28px;
+}
+
+.small-card {
+  max-width: 520px;
+}
+
+.panel {
+  padding: 26px;
+  margin-top: 20px;
+}
+
+.panel h2,
+.form-card h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(250px, 1fr));
+  gap: 18px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field.full-width {
+  grid-column: 1 / -1;
+}
+
+label {
+  font-size: 0.93rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fbfdff;
+  font: inherit;
+  color: var(--text);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid rgba(17, 61, 99, 0.12);
+  border-color: rgba(17, 61, 99, 0.3);
+}
+
+textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 16px;
+}
+
+.stat-box {
+  background: linear-gradient(180deg, #f9fbff, #f1f6ff);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-box span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.stat-box strong {
+  font-size: 1.6rem;
+  line-height: 1.2;
+}
+
+.wide {
+  grid-column: span 2;
+}
+
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+  color: var(--text);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 18px;
+  background: var(--white);
+}
+
+th,
+td {
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+th {
+  background: #f8fbff;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.alert {
+  margin: 0 0 20px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.alert-success {
+  background: #ecfdf5;
+  color: var(--success);
+}
+
+.alert-danger {
+  background: #fff1f2;
+  color: var(--danger);
+}
+
+.alert-warning {
+  background: #fff8e7;
+  color: var(--warning);
+}
+
+.alert-info {
+  background: #eff6ff;
+  color: var(--info);
+}
+
+.muted {
+  color: var(--muted);
+  margin-top: 0;
+  line-height: 1.7;
+}
+
+.demo-otp-box {
+  background: linear-gradient(135deg, #ecfeff, #eff6ff);
+  border: 1px dashed rgba(37, 99, 235, 0.4);
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 1.1rem;
+  margin: 0 0 14px;
+}
+
+.fee-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.fee-summary > div {
+  background: #f8fbff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fee-summary span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.fee-summary strong {
+  font-size: 1.8rem;
+}
+
+@media (max-width: 860px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 34px 24px;
+  }
+
+  .info-strip {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .nav {
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px 0;
+  }
+
+  nav {
+    justify-content: center;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cta-row {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .wide {
+    grid-column: span 1;
+  }
+}

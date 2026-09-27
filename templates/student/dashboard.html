@@ -1,53 +1,69 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Library Management{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  </head>
-  <body>
-    <header class="topbar">
-      <div class="container nav">
-        <div class="brand">
-          <a href="{{ url_for('main.home') }}">Vivekanand Library</a>
-        </div>
-        <nav>
-          {% if session.get('user_type') == 'student' %}
-            <a href="{{ url_for('main.student_dashboard') }}">Dashboard</a>
-            <a href="{{ url_for('main.student_fees') }}">Fees</a>
-            <a href="{{ url_for('main.student_payments') }}">Payments</a>
-            <a href="{{ url_for('main.student_autopay') }}">AutoPay</a>
-            <a href="{{ url_for('main.student_leave_library') }}">Leave Library</a>
-            <a href="{{ url_for('main.logout') }}">Logout</a>
-          {% elif session.get('user_type') == 'admin' %}
-            <a href="{{ url_for('main.admin_dashboard') }}">Admin Dashboard</a>
-            <a href="{{ url_for('main.admin_students') }}">Students</a>
-            <a href="{{ url_for('main.admin_payments') }}">Payments</a>
-            <a href="{{ url_for('main.admin_audit') }}">Audit</a>
-            <a href="{{ url_for('main.admin_seats') }}">Seats</a>
-            <a href="{{ url_for('main.logout') }}">Logout</a>
-          {% else %}
-            <a href="{{ url_for('main.home') }}">Home</a>
-            <a href="{{ url_for('main.register') }}">Register</a>
-            <a href="{{ url_for('main.login') }}">Login</a>
-          {% endif %}
-        </nav>
-      </div>
-    </header>
+{% extends 'base.html' %}
 
-    <main class="container main-content">
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">{{ message }}</div>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
+{% block title %}Admin Dashboard{% endblock %}
 
-      {% block content %}{% endblock %}
-    </main>
+{% block content %}
+<section class="panel">
+  <h2>Admin Dashboard</h2>
+  <div class="stats-grid">
+    <div class="stat-box">
+      <span>Total Students</span>
+      <strong>{{ total_students }}</strong>
+    </div>
+    <div class="stat-box">
+      <span>Active Students</span>
+      <strong>{{ active_students }}</strong>
+    </div>
+    <div class="stat-box">
+      <span>Inactive Students</span>
+      <strong>{{ inactive_students }}</strong>
+    </div>
+    <div class="stat-box">
+      <span>Pending Fees</span>
+      <strong>{{ pending_fees }}</strong>
+    </div>
+    <div class="stat-box">
+      <span>Total Seats</span>
+      <strong>{{ seats }}</strong>
+    </div>
+    <div class="stat-box">
+      <span>Occupied Seats</span>
+      <strong>{{ occupied }}</strong>
+    </div>
+    <div class="stat-box wide">
+      <span>Monthly Collections</span>
+      <strong>₹{{ collections }}</strong>
+    </div>
+  </div>
+</section>
 
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
-  </body>
-</html>
+<section class="panel">
+  <h3>Student List</h3>
+  <div class="table-wrap">
+    {% if students %}
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Student ID</th>
+          <th>Batch</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+        <tr>
+          <td>{{ student.name }}</td>
+          <td>{{ student.student_id }}</td>
+          <td>{{ student.batch }}</td>
+          <td>{{ student.status }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p class="muted">No students yet.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

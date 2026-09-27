@@ -1,39 +1,28 @@
 {% extends 'base.html' %}
 
-{% block title %}Home | Library{% endblock %}
+{% block title %}Login | Library{% endblock %}
 
 {% block content %}
-<section class="hero">
-  <div class="hero-text">
-    <span class="badge">Library Management System</span>
-    <h1>Vivekanand Library</h1>
-    <p>
-      Student registration, monthly fee tracking, AutoPay controls, seat protection,
-      administration dashboard, and secure access for a modern library system.
-    </p>
-    <div class="cta-row">
-      <a class="btn primary" href="{{ url_for('main.register') }}">Student Registration</a>
-      <a class="btn secondary" href="{{ url_for('main.login') }}">Login</a>
+<section class="form-card small-card">
+  <h2>Welcome Back</h2>
+  <p class="muted">OTP-based verification is enabled for prototype use. After valid credentials, a demo OTP is generated.</p>
+  <form method="post">
+    <div class="field">
+      <label>Login As</label>
+      <select name="user_type">
+        <option value="student">Student</option>
+        <option value="admin">Admin</option>
+      </select>
     </div>
-  </div>
-</section>
-
-<section class="features-grid">
-  <div class="feature-card">
-    <h3>Student Portal</h3>
-    <p>Profile, due date, fee history, and payment status.</p>
-  </div>
-  <div class="feature-card">
-    <h3>Admin Panel</h3>
-    <p>Track students, seats, collections, and payment records.</p>
-  </div>
-  <div class="feature-card">
-    <h3>AutoPay</h3>
-    <p>Secure recurring payments only after explicit consent.</p>
-  </div>
-  <div class="feature-card">
-    <h3>Security</h3>
-    <p>Role-based access, audit logs, and session-based authorization.</p>
-  </div>
+    <div class="field">
+      <label>Mobile Number / Username</label>
+      <input type="text" name="username" required>
+    </div>
+    <div class="field">
+      <label>Password / Student ID</label>
+      <input type="password" name="password" required>
+    </div>
+    <button type="submit" class="btn primary full-width">Send OTP</button>
+  </form>
 </section>
 {% endblock %}

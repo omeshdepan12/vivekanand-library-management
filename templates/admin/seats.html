@@ -1,67 +1,18 @@
 {% extends 'base.html' %}
 
-{% block title %}Admin Dashboard{% endblock %}
+{% block title %}Leave Library{% endblock %}
 
 {% block content %}
 <section class="panel">
-  <h2>Admin Dashboard</h2>
-  <div class="stats-grid">
-    <div class="stat-box">
-      <span>Total Students</span>
-      <strong>{{ total_students }}</strong>
-    </div>
-    <div class="stat-box">
-      <span>Active Students</span>
-      <strong>{{ active_students }}</strong>
-    </div>
-    <div class="stat-box">
-      <span>Inactive Students</span>
-      <strong>{{ inactive_students }}</strong>
-    </div>
-    <div class="stat-box">
-      <span>Pending Fees</span>
-      <strong>{{ pending_fees }}</strong>
-    </div>
-    <div class="stat-box">
-      <span>Total Seats</span>
-      <strong>{{ seats }}</strong>
-    </div>
-    <div class="stat-box">
-      <span>Occupied Seats</span>
-      <strong>{{ occupied }}</strong>
-    </div>
-    <div class="stat-box wide">
-      <span>Monthly Collections</span>
-      <strong>₹{{ collections }}</strong>
-    </div>
-  </div>
-</section>
+  <h2>Leave Library</h2>
+  <p class="muted">Leaving library will deactivate your account, cancel AutoPay, and release your seat for another student.</p>
 
-<section class="panel">
-  <h3>Student List</h3>
-  {% if students %}
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Student ID</th>
-        <th>Batch</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for student in students %}
-      <tr>
-        <td>{{ student.name }}</td>
-        <td>{{ student.student_id }}</td>
-        <td>{{ student.batch }}</td>
-        <td>{{ student.status }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-    <p>No students yet.</p>
-  {% endif %}
+  <form method="post" class="form-card small-card" style="margin: 0; max-width: 540px;">
+    <div class="field">
+      <label>Reason for leaving</label>
+      <textarea name="reason" rows="4" placeholder="Optional reason"></textarea>
+    </div>
+    <button class="btn primary full-width" type="submit">Confirm Leave Request</button>
+  </form>
 </section>
 {% endblock %}

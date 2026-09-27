@@ -1,76 +1,44 @@
 {% extends 'base.html' %}
 
-{% block title %}Student Dashboard{% endblock %}
+{% block title %}Student Fees{% endblock %}
 
 {% block content %}
 <section class="panel">
-  <h2>Welcome, {{ student.name }}</h2>
-  <div class="stats-grid">
-    <div class="stat-box">
-      <span>Student ID</span>
-      <strong>{{ student.student_id }}</strong>
-    </div>
-    <div class="stat-box">
+  <h2>My Fees</h2>
+  <div class="fee-summary">
+    <div>
       <span>Monthly Fee</span>
       <strong>₹{{ student.monthly_fee }}</strong>
     </div>
-    <div class="stat-box">
-      <span>Status</span>
-      <strong>{{ student.status }}</strong>
-    </div>
-    <div class="stat-box">
-      <span>AutoPay</span>
-      <strong>{{ auto_pay.status if auto_pay else 'Inactive' }}</strong>
-    </div>
-    <div class="stat-box wide">
-      <span>Seat</span>
-      <strong>{{ seat.seat_number if seat else 'Not Assigned' }}</strong>
+    <div>
+      <span>Due Date</span>
+      <strong>Next Month</strong>
     </div>
   </div>
-</section>
 
-<section class="panel">
-  <h3>My Profile</h3>
-  <ul class="info-list">
-    <li><strong>Mobile:</strong> {{ student.mobile }}</li>
-    <li><strong>Joining Date:</strong> {{ student.joining_date }}</li>
-    <li><strong>Batch:</strong> {{ student.batch }}</li>
-    <li><strong>Emergency Contact:</strong> {{ student.emergency_contact }}</li>
-  </ul>
-</section>
-
-<section class="panel">
-  <h3>Actions</h3>
-  <div class="cta-row">
-    <a class="btn secondary" href="{{ url_for('main.student_autopay') }}">Manage AutoPay</a>
-    <a class="btn secondary" href="{{ url_for('main.student_leave_library') }}">Leave Library</a>
-    <a class="btn secondary" href="{{ url_for('main.student_fees') }}">View Fees</a>
-  </div>
-</section>
-
-<section class="panel">
-  <h3>Payment History</h3>
-  {% if payments %}
+  <div class="table-wrap">
+    {% if payments %}
     <table>
       <thead>
         <tr>
-          <th>Due Date</th>
           <th>Amount</th>
+          <th>Due Date</th>
           <th>Status</th>
         </tr>
       </thead>
       <tbody>
         {% for payment in payments %}
         <tr>
-          <td>{{ payment.due_date }}</td>
           <td>₹{{ payment.amount }}</td>
+          <td>{{ payment.due_date }}</td>
           <td>{{ payment.status }}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
-  {% else %}
-    <p>No payments available yet.</p>
-  {% endif %}
+    {% else %}
+      <p class="muted">No fee records available.</p>
+    {% endif %}
+  </div>
 </section>
 {% endblock %}

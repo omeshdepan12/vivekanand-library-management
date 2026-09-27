@@ -6,13 +6,13 @@
 <section class="panel">
   <h2>AutoPay Management</h2>
 
-  <div class="info-list">
+  <div class="info-list" style="margin-bottom: 18px;">
     <div><strong>Student:</strong> {{ student.name }}</div>
     <div><strong>Monthly Amount:</strong> ₹{{ student.monthly_fee }}</div>
     <div><strong>Status:</strong> {{ auto_pay.status if auto_pay else 'Inactive' }}</div>
   </div>
 
-  <form method="post" class="form-card small-card" style="margin-top: 20px; max-width: 500px;">
+  <form method="post" class="form-card small-card" style="margin: 0; max-width: 500px;">
     {% if auto_pay and auto_pay.status == 'active' %}
       <input type="hidden" name="action" value="cancel">
       <button class="btn primary full-width" type="submit">Cancel AutoPay</button>
