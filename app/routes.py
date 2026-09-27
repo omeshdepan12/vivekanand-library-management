@@ -1,57 +1,106 @@
-# Vivekanand Library Management
+from datetime import datetime
 
-A Flask-based starter project for a library management system with:
-- Home page
-- Student registration
-- Student login with OTP-based verification
-- Admin login and dashboard
-- Student dashboard with fee and payment sections
-- Basic database models for students, admin, payment, and AutoPay status
+from flask_sqlalchemy import SQLAlchemy
 
-## Features included
-- Role-based access: Student and Admin
-- OTP verification flow for prototype login
-- SQLite database setup with SQLAlchemy
-- Basic dashboard pages
-- Security-first layout for future enhancements
-- Ready for adding real payment gateway and OTP integration
+from app import db
 
-## Tech stack
-- Python 3
-- Flask
-- Flask-SQLAlchemy
-- Bootstrap-inspired CSS
 
-## Run locally
+class Admin(db.Model):
+    __tablename__ = "admins"
 
-1. Create a virtual environment
-   ```bash
-   python -m venv venv
-   source venv/bin/activate   # On Windows: venv\Scripts\activate
-   ```
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    role = db.Column(db.String(20), default="admin")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-2. Install dependencies
-   ```bash
-   pip install -r requirements.txt
-   ```
 
-3. Start the app
-   ```bash
-   python run.py
-   ```
+class Student(db.Model):
+    __tablename__ = "students"
 
-4. Open in browser
-   ```text
-   http://127.0.0.1:5000/
-   ```
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    mobile = db.Column(db.String(15), unique=True, nullable=False)
+    student_id = db.Column(db.String(50), unique=True, nullable=False)
+    joining_date = db.Column(db.String(20), nullable=False)
+    batch = db.Column(db.String(50), nullable=False)
+    monthly_fee = db.Column(db.Float, default=0.0)
+    emergency_contact = db.Column(db.String(20), nullable=False)
+    status = db.Column(db.String(20), default="active")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-## Default admin credentials
-```text
-Username: admin
-Password: admin123
-```
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "mobile": self.mobile,
+            "student_id": self.student_id,
+            "joining_date": self.joining_date,
+            "batch": self.batch,
+            "monthly_fee": self.monthly_fee,
+            "emergency_contact": self.emergency_contact,
+            "status": self.status,
+        }
 
-## OTP flow for demo
-When you log in, the app validates the username/mobile and password, then generates a demo OTP and asks you to verify it. This is a prototype OTP flow for development and demonstration.
 
-This is a starter prototype for the library system; you can extend it with real SMS/OTP providers, payment gateway integration, audits, seat protection, and AutoPay features.
+class Payment(db.Model):
+    __tablename__ = "payments"
+
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    due_date = db.Column(db.String(20), nullable=False)
+    paid_date = db.Column(db.String(20), nullable=True)
+    status = db.Column(db.String(20), default="pending")
+    gateway = db.Column(db.String(50), default="secure_gateway")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class AutoPay(db.Model):
+    __tablename__ = "autopays"
+
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=False)
+    status = db.Column(db.String(20), default="inactive")
+    monthly_amount = db.Column(db.Float, default=0.0)
+    next_due_date = db.Column(db.String(20), nullable=True)
+    consent_given = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class Seat(db.Model):
+    __tablename__ = "seats"
+
+    id = db.Column(db.Integer, primary_key=True)
+    seat_number = db.Column(db.String(20), unique=True, nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=True)
+    status = db.Column(db.String(20), default="available")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class LeaveRequest(db.Model):
+    __tablename__ = "leave_requests"
+
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=False)
+    reason = db.Column(db.String(255), nullable=True)
+    status = db.Column(db.String(20), default="pending")
+    requested_at = db.Column(db.DateTime, default=datetime.utcnow)
+    processed_at = db.Column(db.DateTime, nullable=True)
+
+
+class AuditLog(db.Model):
+    __tablename__ = "audit_logs"
+
+    id = db.Column(db.Integer, primary_key=True)
+    entity = db.Column(db.String(50), nullable=False)
+    action = db.Column(db.String(100), nullable=False)
+    details = db.Column(db.String(255), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    @staticmethod
+    def log(entity, action, details):
+        log = AuditLog(entity=entity, action=action, details=details)
+        db.session.add(log)
+        db.session.commit()
