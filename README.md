@@ -1,53 +1,31 @@
-# Vivekanand Library Management
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
-A Flask-based starter project for a library management system with:
-- Home page
-- Student registration
-- Student login
-- Admin login and dashboard
-- Student dashboard with fee and payment sections
-- Basic database models for students, admin, payment, and AutoPay status
+from config import Config
 
-## Features included
-- Role-based access: Student and Admin
-- SQLite database setup with SQLAlchemy
-- Basic dashboard pages
-- Security-first layout for future enhancements
-- Ready for adding real payment gateway and OTP integration
+db = SQLAlchemy()
 
-## Tech stack
-- Python 3
-- Flask
-- Flask-SQLAlchemy
-- Bootstrap-inspired CSS
 
-## Run locally
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
+    db.init_app(app)
 
-1. Create a virtual environment
-   ```bash
-   python -m venv venv
-   source venv/bin/activate   # On Windows: venv\Scripts\activate
-   ```
+    from app.routes import main_bp
+    app.register_blueprint(main_bp)
 
-2. Install dependencies
-   ```bash
-   pip install -r requirements.txt
-   ```
+    with app.app_context():
+        from app.models import Admin
+        db.create_all()
 
-3. Start the app
-   ```bash
-   python run.py
-   ```
+        if not Admin.query.filter_by(username="admin").first():
+            admin = Admin(
+                name="System Admin",
+                username="admin",
+                password="admin123",
+                role="admin"
+            )
+            db.session.add(admin)
+            db.session.commit()
 
-4. Open in browser
-   ```text
-   http://127.0.0.1:5000/
-   ```
-
-## Default admin credentials
-```text
-Username: admin
-Password: admin123
-```
-
-This is a starter prototype for the library system; you can extend it with OTP login, payment gateway integration, audits, seat protection, and AutoPay features.
+    return app

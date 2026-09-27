@@ -1,42 +1,85 @@
-{% extends 'base.html' %}
+from datetime import datetime
 
-{% block title %}Register | Library{% endblock %}
+from flask_sqlalchemy import SQLAlchemy
 
-{% block content %}
-<section class="form-card">
-  <h2>Student Registration</h2>
-  <form method="post">
-    <div class="form-grid">
-      <div class="field">
-        <label>Name</label>
-        <input type="text" name="name" required>
-      </div>
-      <div class="field">
-        <label>Mobile Number</label>
-        <input type="text" name="mobile" required>
-      </div>
-      <div class="field">
-        <label>Student ID</label>
-        <input type="text" name="student_id" required>
-      </div>
-      <div class="field">
-        <label>Joining Date</label>
-        <input type="date" name="joining_date" required>
-      </div>
-      <div class="field">
-        <label>Batch / Seat</label>
-        <input type="text" name="batch" required>
-      </div>
-      <div class="field">
-        <label>Monthly Fee</label>
-        <input type="number" step="0.01" name="monthly_fee" value="0">
-      </div>
-      <div class="field full-width">
-        <label>Emergency Contact</label>
-        <input type="text" name="emergency_contact" required>
-      </div>
-    </div>
-    <button type="submit" class="btn primary full-width">Create Account</button>
-  </form>
-</section>
-{% endblock %}
+from app import db
+
+
+class Admin(db.Model):
+    __tablename__ = "admins"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    role = db.Column(db.String(20), default="admin")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class Student(db.Model):
+    __tablename__ = "students"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    mobile = db.Column(db.String(15), unique=True, nullable=False)
+    student_id = db.Column(db.String(50), unique=True, nullable=False)
+    joining_date = db.Column(db.String(20), nullable=False)
+    batch = db.Column(db.String(50), nullable=False)
+    monthly_fee = db.Column(db.Float, default=0.0)
+    emergency_contact = db.Column(db.String(20), nullable=False)
+    status = db.Column(db.String(20), default="active")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "mobile": self.mobile,
+            "student_id": self.student_id,
+            "joining_date": self.joining_date,
+            "batch": self.batch,
+            "monthly_fee": self.monthly_fee,
+            "emergency_contact": self.emergency_contact,
+            "status": self.status,
+        }
+
+
+class Payment(db.Model):
+    __tablename__ = "payments"
+
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    due_date = db.Column(db.String(20), nullable=False)
+    paid_date = db.Column(db.String(20), nullable=True)
+    status = db.Column(db.String(20), default="pending")
+    gateway = db.Column(db.String(50), default="secure_gateway")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class AutoPay(db.Model):
+    __tablename__ = "autopays"
+
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=False)
+    status = db.Column(db.String(20), default="inactive")
+    monthly_amount = db.Column(db.Float, default=0.0)
+    next_due_date = db.Column(db.String(20), nullable=True)
+    consent_given = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class AuditLog(db.Model):
+    __tablename__ = "audit_logs"
+
+    id = db.Column(db.Integer, primary_key=True)
+    entity = db.Column(db.String(50), nullable=False)
+    action = db.Column(db.String(100), nullable=False)
+    details = db.Column(db.String(255), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    @staticmethod
+    def log(entity, action, details):
+        log = AuditLog(entity=entity, action=action, details=details)
+        db.session.add(log)
+        db.session.commit()

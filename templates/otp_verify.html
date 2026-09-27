@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Login | Library{% endblock %}
+
+{% block content %}
+<section class="form-card small-card">
+  <h2>Login</h2>
+  <p class="muted">OTP-based verification is enabled for prototype use. After valid credentials, a demo OTP is generated.</p>
+  <form method="post">
+    <div class="field">
+      <label>Login As</label>
+      <select name="user_type">
+        <option value="student">Student</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Mobile Number / Username</label>
+      <input type="text" name="username" required>
+    </div>
+    <div class="field">
+      <label>Password / Student ID</label>
+      <input type="password" name="password" required>
+    </div>
+    <button type="submit" class="btn primary full-width">Send OTP</button>
+  </form>
+</section>
+{% endblock %}

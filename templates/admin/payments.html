@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Library Management{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container nav">
+        <div class="brand">
+          <a href="{{ url_for('main.home') }}">Vivekanand Library</a>
+        </div>
+        <nav>
+          {% if session.get('user_type') == 'student' %}
+            <a href="{{ url_for('main.student_dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('main.student_fees') }}">Fees</a>
+            <a href="{{ url_for('main.student_payments') }}">Payments</a>
+            <a href="{{ url_for('main.logout') }}">Logout</a>
+          {% elif session.get('user_type') == 'admin' %}
+            <a href="{{ url_for('main.admin_dashboard') }}">Admin Dashboard</a>
+            <a href="{{ url_for('main.admin_students') }}">Students</a>
+            <a href="{{ url_for('main.admin_payments') }}">Payments</a>
+            <a href="{{ url_for('main.admin_audit') }}">Audit</a>
+            <a href="{{ url_for('main.logout') }}">Logout</a>
+          {% else %}
+            <a href="{{ url_for('main.home') }}">Home</a>
+            <a href="{{ url_for('main.register') }}">Register</a>
+            <a href="{{ url_for('main.login') }}">Login</a>
+          {% endif %}
+        </nav>
+      </div>
+    </header>
+
+    <main class="container main-content">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  </body>
+</html>
