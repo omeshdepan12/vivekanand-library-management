@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<section class="panel">
+  <h2>Welcome, {{ student.name }}</h2>
+  <div class="stats-grid">
+    <div class="stat-box">
+      <span>Student ID</span>
+      <strong>{{ student.student_id }}</strong>
+    </div>
+    <div class="stat-box">
+      <span>Monthly Fee</span>
+      <strong>₹{{ student.monthly_fee }}</strong>
+    </div>
+    <div class="stat-box">
+      <span>Status</span>
+      <strong>{{ student.status }}</strong>
+    </div>
+    <div class="stat-box">
+      <span>AutoPay</span>
+      <strong>{{ auto_pay.status if auto_pay else 'Inactive' }}</strong>
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <h3>My Profile</h3>
+  <ul class="info-list">
+    <li><strong>Mobile:</strong> {{ student.mobile }}</li>
+    <li><strong>Joining Date:</strong> {{ student.joining_date }}</li>
+    <li><strong>Batch:</strong> {{ student.batch }}</li>
+    <li><strong>Emergency Contact:</strong> {{ student.emergency_contact }}</li>
+  </ul>
+</section>
+
+<section class="panel">
+  <h3>Payment History</h3>
+  {% if payments %}
+    <table>
+      <thead>
+        <tr>
+          <th>Due Date</th>
+          <th>Amount</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for payment in payments %}
+        <tr>
+          <td>{{ payment.due_date }}</td>
+          <td>₹{{ payment.amount }}</td>
+          <td>{{ payment.status }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No payments available yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

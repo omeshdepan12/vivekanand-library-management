@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Home | Library{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-text">
+    <span class="badge">Library Management System</span>
+    <h1>Vivekanand Library</h1>
+    <p>
+      Student registration, monthly fee tracking, AutoPay controls, seat protection,
+      administration dashboard, and secure access for a modern library system.
+    </p>
+    <div class="cta-row">
+      <a class="btn primary" href="{{ url_for('main.register') }}">Student Registration</a>
+      <a class="btn secondary" href="{{ url_for('main.login') }}">Login</a>
+    </div>
+  </div>
+</section>
+
+<section class="features-grid">
+  <div class="feature-card">
+    <h3>Student Portal</h3>
+    <p>Profile, due date, fee history, and payment status.</p>
+  </div>
+  <div class="feature-card">
+    <h3>Admin Panel</h3>
+    <p>Track students, seats, collections, and payment records.</p>
+  </div>
+  <div class="feature-card">
+    <h3>AutoPay</h3>
+    <p>Secure recurring payments only after explicit consent.</p>
+  </div>
+  <div class="feature-card">
+    <h3>Security</h3>
+    <p>Role-based access, audit logs, and session-based authorization.</p>
+  </div>
+</section>
+{% endblock %}

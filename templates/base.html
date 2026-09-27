@@ -1,0 +1,157 @@
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+
+from app import db
+from app.models import Admin, Student, Payment, AutoPay, AuditLog
+
+main_bp = Blueprint("main", __name__)
+
+
+def login_required(user_type=None):
+    def decorator(view_func):
+        def wrapped(*args, **kwargs):
+            if "user_id" not in session or "user_type" not in session:
+                flash("Please login first.", "warning")
+                return redirect(url_for("main.login"))
+
+            if user_type and session.get("user_type") != user_type:
+                flash("You do not have access to this page.", "danger")
+                return redirect(url_for("main.home"))
+            return view_func(*args, **kwargs)
+
+        wrapped.__name__ = view_func.__name__
+        return wrapped
+
+    return decorator
+
+
+@main_bp.route("/")
+def home():
+    return render_template("home.html")
+
+
+@main_bp.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        mobile = request.form.get("mobile", "").strip()
+        student_id = request.form.get("student_id", "").strip()
+        joining_date = request.form.get("joining_date", "").strip()
+        batch = request.form.get("batch", "").strip()
+        monthly_fee = float(request.form.get("monthly_fee", 0) or 0)
+        emergency_contact = request.form.get("emergency_contact", "").strip()
+
+        if not all([name, mobile, student_id, joining_date, batch, emergency_contact]):
+            flash("Please fill all required fields.", "danger")
+            return redirect(url_for("main.register"))
+
+        if Student.query.filter((Student.mobile == mobile) | (Student.student_id == student_id)).first():
+            flash("Mobile number or Student ID already exists.", "danger")
+            return redirect(url_for("main.register"))
+
+        student = Student(
+            name=name,
+            mobile=mobile,
+            student_id=student_id,
+            joining_date=joining_date,
+            batch=batch,
+            monthly_fee=monthly_fee,
+            emergency_contact=emergency_contact,
+            status="active"
+        )
+        db.session.add(student)
+        db.session.commit()
+
+        AuditLog.create_log = lambda entity, action, details: None
+        db.session.add(AuditLog(entity="student", action="registered", details=f"Student {name} registered."))
+        db.session.commit()
+
+        flash("Registration successful. Please login.", "success")
+        return redirect(url_for("main.login"))
+
+    return render_template("register.html")
+
+
+@main_bp.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        user_type = request.form.get("user_type")
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "")
+
+        if user_type == "student":
+            student = Student.query.filter_by(mobile=username).first()
+            if student and student.student_id == password:
+                session["user_id"] = student.id
+                session["user_type"] = "student"
+                session["name"] = student.name
+                flash("Student login successful.", "success")
+                return redirect(url_for("main.student_dashboard"))
+
+            flash("Invalid student login details.", "danger")
+            return redirect(url_for("main.login"))
+
+        if user_type == "admin":
+            admin = Admin.query.filter_by(username=username).first()
+            if admin and admin.password == password:
+                session["user_id"] = admin.id
+                session["user_type"] = "admin"
+                session["name"] = admin.name
+                flash("Admin login successful.", "success")
+                return redirect(url_for("main.admin_dashboard"))
+
+            flash("Invalid admin credentials.", "danger")
+            return redirect(url_for("main.login"))
+
+    return render_template("login.html")
+
+
+@main_bp.route("/logout")
+def logout():
+    session.clear()
+    flash("You have been logged out.", "info")
+    return redirect(url_for("main.home"))
+
+
+@main_bp.route("/student/dashboard")
+@login_required("student")
+def student_dashboard():
+    student = Student.query.get_or_404(session["user_id"])
+    payments = Payment.query.filter_by(student_id=student.id).all()
+    auto_pay = AutoPay.query.filter_by(student_id=student.id).first()
+    return render_template("student/dashboard.html", student=student, payments=payments, auto_pay=auto_pay)
+
+
+@main_bp.route("/admin/dashboard")
+@login_required("admin")
+def admin_dashboard():
+    students = Student.query.order_by(Student.id.desc()).all()
+    total_students = Student.query.count()
+    active_students = Student.query.filter_by(status="active").count()
+    inactive_students = Student.query.filter_by(status="inactive").count()
+    pending_fees = Payment.query.filter_by(status="pending").count()
+    collections = sum(payment.amount for payment in Payment.query.filter_by(status="paid").all())
+
+    return render_template(
+        "admin/dashboard.html",
+        students=students,
+        total_students=total_students,
+        active_students=active_students,
+        inactive_students=inactive_students,
+        pending_fees=pending_fees,
+        collections=collections,
+    )
+
+
+@main_bp.route("/student/fees")
+@login_required("student")
+def student_fees():
+    student = Student.query.get_or_404(session["user_id"])
+    payments = Payment.query.filter_by(student_id=student.id).all()
+    return render_template("student/fees.html", student=student, payments=payments)
+
+
+@main_bp.route("/admin/students")
+@login_required("admin")
+def admin_students():
+    students = Student.query.all()
+    return render_template("admin/students.html", students=students)

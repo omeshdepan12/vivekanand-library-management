@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Fees{% endblock %}
+
+{% block content %}
+<section class="panel">
+  <h2>My Fees</h2>
+  <div class="fee-summary">
+    <div>
+      <span>Monthly Fee</span>
+      <strong>₹{{ student.monthly_fee }}</strong>
+    </div>
+    <div>
+      <span>Due Date</span>
+      <strong>Next month</strong>
+    </div>
+  </div>
+
+  {% if payments %}
+  <table>
+    <thead>
+      <tr>
+        <th>Amount</th>
+        <th>Due Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for payment in payments %}
+      <tr>
+        <td>₹{{ payment.amount }}</td>
+        <td>{{ payment.due_date }}</td>
+        <td>{{ payment.status }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p>No fee records available.</p>
+  {% endif %}
+</section>
+{% endblock %}

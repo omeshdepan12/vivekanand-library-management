@@ -1,0 +1,78 @@
+from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
+
+from app import db
+
+
+class Admin(db.Model):
+    __tablename__ = "admins"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    role = db.Column(db.String(20), default="admin")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class Student(db.Model):
+    __tablename__ = "students"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    mobile = db.Column(db.String(15), unique=True, nullable=False)
+    student_id = db.Column(db.String(50), unique=True, nullable=False)
+    joining_date = db.Column(db.String(20), nullable=False)
+    batch = db.Column(db.String(50), nullable=False)
+    monthly_fee = db.Column(db.Float, default=0.0)
+    emergency_contact = db.Column(db.String(20), nullable=False)
+    status = db.Column(db.String(20), default="active")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "mobile": self.mobile,
+            "student_id": self.student_id,
+            "joining_date": self.joining_date,
+            "batch": self.batch,
+            "monthly_fee": self.monthly_fee,
+            "emergency_contact": self.emergency_contact,
+            "status": self.status,
+        }
+
+
+class Payment(db.Model):
+    __tablename__ = "payments"
+
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    due_date = db.Column(db.String(20), nullable=False)
+    paid_date = db.Column(db.String(20), nullable=True)
+    status = db.Column(db.String(20), default="pending")
+    gateway = db.Column(db.String(50), default="secure_gateway")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class AutoPay(db.Model):
+    __tablename__ = "autopays"
+
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=False)
+    status = db.Column(db.String(20), default="inactive")
+    monthly_amount = db.Column(db.Float, default=0.0)
+    next_due_date = db.Column(db.String(20), nullable=True)
+    consent_given = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class AuditLog(db.Model):
+    __tablename__ = "audit_logs"
+
+    id = db.Column(db.Integer, primary_key=True)
+    entity = db.Column(db.String(50), nullable=False)
+    action = db.Column(db.String(100), nullable=False)
+    details = db.Column(db.String(255), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
